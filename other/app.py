@@ -223,7 +223,7 @@ def submit_scrap():
         price = float(request.form['price'])
         pickup_date = datetime.strptime(request.form['pickup_date'], '%Y-%m-%d').date()
         pickup_slot = request.form['pickup_slot']
-        address = request.form['address']  # New address field
+        address = request.form['address']
         
         # Check if a similar scrap entry already exists
         existing_scrap = Scrap.query.filter_by(
@@ -258,7 +258,7 @@ def submit_scrap():
             price=price,
             pickup_date=pickup_date,
             pickup_slot=pickup_slot,
-            address=address,  # Add address to the scrap
+            address=address,
             image_path=image_path,
             user_id=current_user.id,
             status='pending'
