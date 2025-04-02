@@ -1,876 +1,352 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoWaste Solutions - Metal Waste Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container navbar-content">
+            <a href="{{ url_for('home') }}" class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-recycle"></i>
+                </div>
+                <div class="logo-text">Eco<span>Waste</span></div>
+            </a>
+            <ul class="nav-links">
+                <li><a href="#about">About</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#contact">Contact</a></li>
+                {% if current_user.is_authenticated %}
+                    <li><a href="{{ url_for('user_dashboard') }}">Dashboard</a></li>
+                    <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                {% else %}
+                    <li><a href="{{ url_for('login') }}">Login</a></li>
+                    <li><a href="{{ url_for('register') }}" class="cta-button">Join Now</a></li>
+                {% endif %}
+            </ul>
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
 
-{% block title %}Metal Waste Management - Sustainable Recycling Solutions{% endblock %}
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Transform Metal Waste into Sustainable Solutions</h1>
+                <p>Join our platform to connect with buyers and sellers, making metal recycling efficient and profitable.</p>
+                <div class="hero-buttons">
+                    {% if current_user.is_authenticated %}
+                        <a href="{{ url_for('user_dashboard') }}" class="cta-button">Go to Dashboard</a>
+                        <a href="#contact" class="secondary-button">Contact Us</a>
+                    {% else %}
+                        <a href="{{ url_for('register') }}" class="cta-button">Join Platform</a>
+                        <a href="#contact" class="secondary-button">Learn More</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
 
-{% block content %}
-<!-- Hero Section -->
-<section class="hero-section">
-    <div class="hero-particles" id="particles-js"></div>
-    <div class="hero-shapes">
-        <div class="shape shape-1"></div>
-        <div class="shape shape-2"></div>
-        <div class="shape shape-3"></div>
-        <div class="shape shape-4"></div>
-        <div class="shape shape-5"></div>
-    </div>
-    <div class="container">
-        <div class="row min-vh-100 align-items-center">
-            <div class="col-lg-8 mx-auto text-center" data-aos="fade-up">
-                <div class="hero-content">
-                    <div class="badge-wrapper">
-                        <span class="badge bg-gradient">Eco-Friendly Solution</span>
-                    </div>
-                    <h1 class="display-2 fw-bold text-white mb-4">
-                        Transform Metal Waste into <span class="gradient-text">Valuable Resources</span>
-                    </h1>
-                    <p class="lead text-white-50 mb-5">
-                        Join our sustainable metal recycling platform. Connect with processors, buyers, and recyclers to create a greener future.
-                    </p>
-                    <div class="d-flex justify-content-center gap-4">
-                        <a href="{{ url_for('register') }}" class="btn btn-gradient btn-lg">
-                            <i class="fas fa-user-plus me-2"></i>Get Started
-                        </a>
-                        <a href="#features" class="btn btn-outline-light btn-lg">
-                            <i class="fas fa-info-circle me-2"></i>Learn More
-                        </a>
+    <!-- About Section -->
+    <section id="about" class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">About Us</h2>
+                <p>We're dedicated to revolutionizing metal waste management through technology and community.</p>
+            </div>
+            <div class="about-content">
+                <div class="about-image">
+                    <img src="https://source.unsplash.com/random/800x600/?recycling,metal" alt="About Us">
+                    <div class="about-pattern"></div>
+                </div>
+                <div class="about-text">
+                    <h3>Our Mission</h3>
+                    <p>At EcoWaste Solutions, we're committed to creating a sustainable future by connecting metal waste generators with responsible recyclers. Our platform facilitates efficient metal recycling while promoting environmental consciousness.</p>
+                    <div class="about-features">
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fas fa-leaf"></i>
+                            </div>
+                            <div>
+                                <h4>Eco-Friendly</h4>
+                                <p>Promoting sustainable practices</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fas fa-handshake"></i>
+                            </div>
+                            <div>
+                                <h4>Trusted Platform</h4>
+                                <p>Secure and reliable transactions</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- Stats Section -->
-<section class="stats-section">
-    <div class="container">
-        <div class="row g-4">
-            <div class="col-md-3" data-aos="fade-up" data-aos-delay="100">
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-weight-hanging"></i>
+    <!-- Services Section -->
+    <section id="services" class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Our Services</h2>
+                <p>Comprehensive solutions for metal waste management</p>
+            </div>
+            <div class="service-cards">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-exchange-alt"></i>
                     </div>
-                    <div class="stat-content">
-                        <h3 class="counter">1000+</h3>
-                        <p>Tons Recycled</p>
+                    <div class="service-content">
+                        <h3>Metal Trading</h3>
+                        <p>Connect with buyers and sellers for metal waste trading</p>
+                        {% if current_user.is_authenticated %}
+                            <a href="{{ url_for('user_dashboard') }}" class="service-link">
+                                Start Trading <i class="fas fa-arrow-right"></i>
+                            </a>
+                        {% else %}
+                            <a href="{{ url_for('register') }}" class="service-link">
+                                Join Now <i class="fas fa-arrow-right"></i>
+                            </a>
+                        {% endif %}
                     </div>
                 </div>
-            </div>
-            <div class="col-md-3" data-aos="fade-up" data-aos-delay="200">
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <div class="stat-content">
-                        <h3 class="counter">500+</h3>
-                        <p>Happy Customers</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3" data-aos="fade-up" data-aos-delay="300">
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-building"></i>
-                    </div>
-                    <div class="stat-content">
-                        <h3 class="counter">50+</h3>
-                        <p>Partner Companies</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3" data-aos="fade-up" data-aos-delay="400">
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-globe"></i>
-                    </div>
-                    <div class="stat-content">
-                        <h3 class="counter">10+</h3>
-                        <p>Cities Covered</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Features Section -->
-<section id="features" class="features-section">
-    <div class="container">
-        <div class="section-header text-center" data-aos="fade-up">
-            <span class="section-badge">Why Choose Us</span>
-            <h2 class="section-title">Experience the Benefits</h2>
-            <p class="section-subtitle">Join our comprehensive metal waste management platform</p>
-        </div>
-        <div class="row g-4">
-            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-recycle"></i>
-                    </div>
-                    <h3>Sustainable Recycling</h3>
-                    <p>Contribute to environmental conservation by properly recycling metal waste</p>
-                </div>
-            </div>
-            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-hand-holding-usd"></i>
-                    </div>
-                    <h3>Fair Pricing</h3>
-                    <p>Get competitive rates for your metal waste through our transparent pricing system</p>
-                </div>
-            </div>
-            <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
-                <div class="feature-card">
-                    <div class="feature-icon">
+                <div class="service-card">
+                    <div class="service-icon">
                         <i class="fas fa-truck"></i>
                     </div>
-                    <h3>Convenient Pickup</h3>
-                    <p>Schedule flexible pickup slots for your metal waste collection</p>
+                    <div class="service-content">
+                        <h3>Pickup Service</h3>
+                        <p>Convenient pickup service for your metal waste</p>
+                        {% if current_user.is_authenticated %}
+                            <a href="{{ url_for('user_dashboard') }}" class="service-link">
+                                Schedule Pickup <i class="fas fa-arrow-right"></i>
+                            </a>
+                        {% else %}
+                            <a href="{{ url_for('register') }}" class="service-link">
+                                Join Now <i class="fas fa-arrow-right"></i>
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="service-content">
+                        <h3>Market Insights</h3>
+                        <p>Stay updated with metal market trends and prices</p>
+                        {% if current_user.is_authenticated %}
+                            <a href="{{ url_for('user_dashboard') }}" class="service-link">
+                                View Insights <i class="fas fa-arrow-right"></i>
+                            </a>
+                        {% else %}
+                            <a href="{{ url_for('register') }}" class="service-link">
+                                Join Now <i class="fas fa-arrow-right"></i>
+                            </a>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- Process Section -->
-<section class="process-section">
-    <div class="container">
-        <div class="section-header text-center" data-aos="fade-up">
-            <span class="section-badge">How It Works</span>
-            <h2 class="section-title">Simple Steps to Start</h2>
-            <p class="section-subtitle">Follow these easy steps to recycle your metal waste</p>
-        </div>
-        <div class="row g-4">
-            <div class="col-md-3" data-aos="fade-up" data-aos-delay="100">
-                <div class="process-card">
-                    <div class="process-number">01</div>
-                    <div class="process-icon">
-                        <i class="fas fa-user-plus"></i>
-                    </div>
-                    <h4>Register</h4>
-                    <p>Create your account as a user, recycler, processor, or buyer</p>
+    <!-- Stats Section -->
+    <section class="stats">
+        <div class="container">
+            <div class="stats-container">
+                <div class="stat-item">
+                    <div class="stat-number">1000+</div>
+                    <div class="stat-text">Active Users</div>
                 </div>
-            </div>
-            <div class="col-md-3" data-aos="fade-up" data-aos-delay="200">
-                <div class="process-card">
-                    <div class="process-number">02</div>
-                    <div class="process-icon">
-                        <i class="fas fa-weight-hanging"></i>
-                    </div>
-                    <h4>Submit Scrap</h4>
-                    <p>List your metal waste with details and images</p>
+                <div class="stat-item">
+                    <div class="stat-number">5000+</div>
+                    <div class="stat-text">Tons Recycled</div>
                 </div>
-            </div>
-            <div class="col-md-3" data-aos="fade-up" data-aos-delay="300">
-                <div class="process-card">
-                    <div class="process-number">03</div>
-                    <div class="process-icon">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <h4>Get Approved</h4>
-                    <p>Our team reviews and approves your submission</p>
+                <div class="stat-item">
+                    <div class="stat-number">100+</div>
+                    <div class="stat-text">Cities Covered</div>
                 </div>
-            </div>
-            <div class="col-md-3" data-aos="fade-up" data-aos-delay="400">
-                <div class="process-card">
-                    <div class="process-number">04</div>
-                    <div class="process-icon">
-                        <i class="fas fa-money-bill-wave"></i>
-                    </div>
-                    <h4>Earn Money</h4>
-                    <p>Receive payment for your recycled metal waste</p>
+                <div class="stat-item">
+                    <div class="stat-number">98%</div>
+                    <div class="stat-text">Customer Satisfaction</div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- Materials Section -->
-<section class="materials-section">
-    <div class="container">
-        <div class="section-header text-center" data-aos="fade-up">
-            <span class="section-badge">Materials</span>
-            <h2 class="section-title">Materials We Accept</h2>
-            <p class="section-subtitle">We process various types of metal waste</p>
-        </div>
-        <div class="row g-4">
-            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
-                <div class="material-card">
-                    <div class="material-image">
-                        <img src="https://images.unsplash.com/photo-1581092334247-ddef2a41fdd4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1471&q=80" alt="Steel" class="img-fluid">
-                        <div class="material-overlay">
-                            <i class="fas fa-cube"></i>
+    <!-- Contact Section -->
+    <section id="contact" class="section contact">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Contact Us</h2>
+                <p>Get in touch with our team</p>
+            </div>
+            <div class="contact-wrapper">
+                <div class="contact-cards">
+                    <div class="contact-card">
+                        <div class="contact-icon">
+                            <i class="fas fa-map-marker-alt"></i>
                         </div>
+                        <h3>Address</h3>
+                        <p>123 Eco Street, Green City, 12345</p>
                     </div>
-                    <div class="material-content">
-                        <h3>Steel</h3>
-                        <p>All types of steel scrap including construction materials</p>
+                    <div class="contact-card">
+                        <div class="contact-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <h3>Phone</h3>
+                        <p>+1 (555) 123-4567</p>
+                    </div>
+                    <div class="contact-card">
+                        <div class="contact-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <h3>Email</h3>
+                        <p>info@ecowastesolutions.com</p>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
-                <div class="material-card">
-                    <div class="material-image">
-                        <img src="https://images.unsplash.com/photo-1581092334247-ddef2a41fdd4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1471&q=80" alt="Aluminium" class="img-fluid">
-                        <div class="material-overlay">
-                            <i class="fas fa-circle"></i>
+                <div class="contact-form-container">
+                    <form class="contact-form" action="{{ url_for('contact') }}" method="POST">
+                        <h3>Send us a Message</h3>
+                        <div class="form-group">
+                            <input type="text" name="name" placeholder="Your Name" required>
                         </div>
-                    </div>
-                    <div class="material-content">
-                        <h3>Aluminium</h3>
-                        <p>Aluminum cans, sheets, and other aluminum products</p>
-                    </div>
+                        <div class="form-group">
+                            <input type="email" name="email" placeholder="Your Email" required>
+                        </div>
+                        <div class="form-group">
+                            <select name="subject" required>
+                                <option value="">Select Subject</option>
+                                <option value="general">General Inquiry</option>
+                                <option value="business">Business Partnership</option>
+                                <option value="support">Technical Support</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <textarea name="message" placeholder="Your Message" rows="5" required></textarea>
+                        </div>
+                        <button type="submit" class="submit-btn">Send Message</button>
+                    </form>
                 </div>
-            </div>
-            <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
-                <div class="material-card">
-                    <div class="material-image">
-                        <img src="https://images.unsplash.com/photo-1581092334247-ddef2a41fdd4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1471&q=80" alt="Copper" class="img-fluid">
-                        <div class="material-overlay">
-                            <i class="fas fa-circle-notch"></i>
-                        </div>
-                    </div>
-                    <div class="material-content">
-                        <h3>Copper</h3>
-                        <p>Copper wires, pipes, and other copper materials</p>
-                    </div>
+                <div class="contact-map">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d387193.30591910525!2d-74.25986532962815!3d40.69714941945609!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c24fa5d33f083b%3A0xc80b8f06e177fe62!2sNew%20York%2C%20NY%2C%20USA!5e0!3m2!1sen!2s!4v1641234567890!5m2!1sen!2s" allowfullscreen="" loading="lazy"></iframe>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- CTA Section -->
-<section class="cta-section">
-    <div class="container">
-        <div class="cta-card">
-            <div class="row align-items-center">
-                <div class="col-lg-8" data-aos="fade-right">
-                    <h2 class="display-4 fw-bold mb-3">Ready to Start Recycling?</h2>
-                    <p class="lead mb-0">Join our platform today and make a difference in the environment</p>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-recycle"></i>
+                    </div>
+                    <div class="logo-text">Eco<span>Waste</span></div>
                 </div>
-                <div class="col-lg-4 text-lg-end" data-aos="fade-left">
-                    <a href="{{ url_for('register') }}" class="btn btn-gradient btn-lg">
-                        <i class="fas fa-user-plus me-2"></i>Register Now
-                    </a>
+                <div class="footer-links">
+                    <a href="#about">About</a>
+                    <a href="#services">Services</a>
+                    <a href="#contact">Contact</a>
+                    <a href="{{ url_for('privacy_policy') }}">Privacy Policy</a>
+                    <a href="{{ url_for('terms') }}">Terms of Service</a>
+                </div>
+                <div class="footer-social">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 EcoWaste Solutions. All rights reserved.</p>
+                <div class="footer-legal">
+                    <a href="{{ url_for('privacy_policy') }}">Privacy Policy</a>
+                    <a href="{{ url_for('terms') }}">Terms of Service</a>
+                    <a href="{{ url_for('cookies') }}">Cookie Policy</a>
                 </div>
             </div>
         </div>
+    </footer>
+
+    <!-- Floating CTA -->
+    <div class="floating-cta">
+        <a href="#contact" class="floating-btn">
+            <i class="fas fa-comments"></i>
+            <span>Need Help?</span>
+        </a>
     </div>
-</section>
 
-<style>
-/* Global Styles */
-:root {
-    --primary-color: #00b894;
-    --secondary-color: #00cec9;
-    --accent-color: #6c5ce7;
-    --dark-color: #2d3436;
-    --light-color: #f5f6fa;
-    --gradient: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    --gradient-2: linear-gradient(135deg, var(--accent-color), var(--primary-color));
-    --shadow: 0 10px 30px rgba(0,0,0,0.1);
-    --transition: all 0.3s ease;
-}
+    <!-- Help Dropdown -->
+    <div class="help-dropdown">
+        <div class="help-option">
+            <i class="fas fa-phone"></i>
+            <span>Call Support</span>
+            <a href="tel:+15551234567" class="help-link"></a>
+        </div>
+        <div class="help-option">
+            <i class="fas fa-envelope"></i>
+            <span>Email Support</span>
+            <a href="mailto:support@ecowastesolutions.com" class="help-link"></a>
+        </div>
+        <div class="help-option">
+            <i class="fas fa-comments"></i>
+            <span>Live Chat</span>
+            <a href="#" class="help-link"></a>
+        </div>
+    </div>
 
-body {
-    font-family: 'Poppins', sans-serif;
-    overflow-x: hidden;
-}
-
-/* Section Headers */
-.section-header {
-    margin-bottom: 4rem;
-}
-
-.section-badge {
-    background: var(--gradient);
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 50px;
-    font-size: 0.9rem;
-            font-weight: 500;
-    margin-bottom: 1rem;
-            display: inline-block;
-}
-
-.section-title {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
-    color: var(--dark-color);
-}
-
-.section-subtitle {
-    color: #666;
-    font-size: 1.1rem;
-        }
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const navLinks = document.querySelector('.nav-links');
         
-        /* Hero Section */
-.hero-section {
-    min-height: 100vh;
-            position: relative;
-    background: var(--dark-color);
-            overflow: hidden;
-        }
+        mobileMenuBtn.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+
+        // Help Button Toggle
+        const floatingBtn = document.querySelector('.floating-btn');
+        const helpDropdown = document.querySelector('.help-dropdown');
         
-.hero-particles {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-    z-index: 1;
-}
+        floatingBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            helpDropdown.classList.toggle('active');
+        });
 
-.hero-shapes {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-            z-index: 1;
-}
-
-.shape {
-    position: absolute;
-    border-radius: 50%;
-    background: var(--gradient);
-    opacity: 0.1;
-    animation: float 20s infinite;
-}
-
-.shape-1 {
-    width: 300px;
-    height: 300px;
-    top: -100px;
-    left: -100px;
-    animation-delay: 0s;
-}
-
-.shape-2 {
-    width: 200px;
-    height: 200px;
-    top: 50%;
-    right: -50px;
-    background: var(--gradient-2);
-    animation-delay: -5s;
-}
-
-.shape-3 {
-    width: 150px;
-    height: 150px;
-    bottom: -50px;
-    left: 20%;
-    animation-delay: -10s;
-}
-
-.shape-4 {
-    width: 100px;
-    height: 100px;
-    top: 20%;
-    right: 15%;
-    background: var(--gradient-2);
-    animation-delay: -15s;
-}
-
-.shape-5 {
-    width: 80px;
-    height: 80px;
-    bottom: 20%;
-    right: 30%;
-    animation-delay: -20s;
-}
-
-.hero-content {
-            position: relative;
-    z-index: 2;
-}
-
-.badge-wrapper {
-    margin-bottom: 2rem;
-}
-
-.badge.bg-gradient {
-    background: var(--gradient);
-    padding: 0.8rem 1.5rem;
-    font-size: 1rem;
-    font-weight: 500;
-    border-radius: 50px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-}
-
-.gradient-text {
-    background: var(--gradient-2);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-            position: relative;
-}
-
-.gradient-text::after {
-            content: '';
-            position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background: var(--gradient-2);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.5s ease;
-}
-
-.gradient-text:hover::after {
-    transform: scaleX(1);
-}
-
-/* Stats Section */
-.stats-section {
-    padding: 6rem 0;
-    background: var(--light-color);
-}
-
-.stat-card {
-    background: white;
-    padding: 2rem;
-    border-radius: 20px;
-            display: flex;
-            align-items: center;
-    gap: 1.5rem;
-    box-shadow: var(--shadow);
-            transition: var(--transition);
-        }
-        
-.stat-card:hover {
-            transform: translateY(-10px);
-}
-
-.stat-icon {
-    width: 70px;
-    height: 70px;
-    background: var(--gradient);
-    border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-    font-size: 2rem;
-    color: white;
-}
-
-.stat-content h3 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin: 0;
-    color: var(--dark-color);
-}
-
-.stat-content p {
-    margin: 0;
-    color: #666;
-    font-size: 1.1rem;
-}
-
-/* Features Section */
-.features-section {
-    padding: 6rem 0;
-    background: white;
-}
-
-.feature-card {
-    background: white;
-    padding: 3rem 2rem;
-    border-radius: 20px;
-    text-align: center;
-            transition: var(--transition);
-    box-shadow: var(--shadow);
-    border: 1px solid rgba(0,0,0,0.05);
-}
-
-.feature-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-}
-
-.feature-icon {
-    width: 90px;
-    height: 90px;
-    background: var(--gradient);
-    border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-    margin: 0 auto 2rem;
-    font-size: 2.5rem;
-    color: white;
-}
-
-.feature-card h3 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-    color: var(--dark-color);
-}
-
-.feature-card p {
-    color: #666;
-    margin: 0;
-}
-
-/* Process Section */
-.process-section {
-    padding: 6rem 0;
-    background: var(--light-color);
-}
-
-.process-card {
-    background: white;
-    padding: 3rem 2rem;
-    border-radius: 20px;
-    text-align: center;
-    position: relative;
-    box-shadow: var(--shadow);
-            transition: var(--transition);
-        }
-        
-.process-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-}
-
-.process-number {
-    position: absolute;
-    top: -20px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 40px;
-    height: 40px;
-    background: var(--gradient);
-    color: white;
-    border-radius: 50%;
-            display: flex;
-            align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 1.2rem;
-}
-
-.process-icon {
-    width: 80px;
-    height: 80px;
-    background: var(--gradient);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-    margin: 0 auto 2rem;
-    font-size: 2rem;
-    color: white;
-        }
-        
-.process-card h4 {
-    font-size: 1.3rem;
-            font-weight: 600;
-    margin-bottom: 1rem;
-    color: var(--dark-color);
-}
-
-.process-card p {
-    color: #666;
-    margin: 0;
-}
-
-/* Materials Section */
-.materials-section {
-    padding: 6rem 0;
-    background: white;
-}
-
-.material-card {
-    background: white;
-    border-radius: 20px;
-            overflow: hidden;
-    box-shadow: var(--shadow);
-    transition: var(--transition);
-}
-
-.material-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-}
-
-.material-image {
-    position: relative;
-    height: 250px;
-    overflow: hidden;
-}
-
-.material-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: var(--transition);
-}
-
-.material-card:hover .material-image img {
-    transform: scale(1.1);
-}
-
-.material-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-    opacity: 0;
-            transition: var(--transition);
-        }
-        
-.material-card:hover .material-overlay {
-    opacity: 1;
-}
-
-.material-overlay i {
-    font-size: 3rem;
-    color: white;
-}
-
-.material-content {
-    padding: 2rem;
-    text-align: center;
-}
-
-.material-content h3 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-    color: var(--dark-color);
-}
-
-.material-content p {
-    color: #666;
-    margin: 0;
-}
-
-/* CTA Section */
-.cta-section {
-    padding: 6rem 0;
-    background: var(--light-color);
-}
-
-.cta-card {
-    background: var(--gradient);
-    padding: 4rem;
-    border-radius: 30px;
-    color: white;
-    box-shadow: var(--shadow);
-}
-
-/* Buttons */
-.btn-gradient {
-    background: var(--gradient);
-    color: white;
-    border: none;
-    padding: 1rem 2rem;
-    border-radius: 50px;
-    font-weight: 500;
-    transition: var(--transition);
-    position: relative;
-    overflow: hidden;
-}
-
-.btn-gradient::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: var(--gradient-2);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.btn-gradient:hover::before {
-    opacity: 1;
-}
-
-.btn-gradient span {
-    position: relative;
-    z-index: 1;
-}
-
-.btn-gradient:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-    color: white;
-}
-
-.btn-outline-light {
-    border: 2px solid white;
-    padding: 1rem 2rem;
-    border-radius: 50px;
-    font-weight: 500;
-            transition: var(--transition);
-    position: relative;
-    overflow: hidden;
-}
-
-.btn-outline-light::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: white;
-    transform: scaleX(0);
-    transform-origin: right;
-    transition: transform 0.3s ease;
-}
-
-.btn-outline-light:hover::before {
-    transform: scaleX(1);
-}
-
-.btn-outline-light span {
-    position: relative;
-    z-index: 1;
-}
-
-.btn-outline-light:hover {
-    color: var(--dark-color);
-    transform: translateY(-3px);
-}
-
-/* Animations */
-@keyframes float {
-    0% {
-        transform: translate(0, 0) rotate(0deg);
-    }
-    25% {
-        transform: translate(50px, 50px) rotate(90deg);
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!floatingBtn.contains(e.target) && !helpDropdown.contains(e.target)) {
+                helpDropdown.classList.remove('active');
             }
-            50% {
-        transform: translate(0, 100px) rotate(180deg);
-    }
-    75% {
-        transform: translate(-50px, 50px) rotate(270deg);
-            }
-            100% {
-        transform: translate(0, 0) rotate(360deg);
-    }
-}
+        });
 
-/* Responsive Design */
-@media (max-width: 768px) {
-    .hero-section {
-        min-height: auto;
-        padding: 4rem 0;
-    }
-    
-    .hero-shapes {
-                display: none;
-            }
-            
-    .process-card {
-        margin-bottom: 2rem;
-            }
-            
-    .cta-card {
-        padding: 2rem;
-            }
-            
-            .section-title {
-                font-size: 2rem;
-            }
-}
-</style>
-
-<!-- Particles.js -->
-<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-<script>
-particlesJS('particles-js', {
-    particles: {
-        number: {
-            value: 80,
-            density: {
-                enable: true,
-                value_area: 800
-            }
-        },
-        color: {
-            value: '#ffffff'
-        },
-        shape: {
-            type: 'circle'
-        },
-        opacity: {
-            value: 0.5,
-            random: false
-        },
-        size: {
-            value: 3,
-            random: true
-        },
-        line_linked: {
-            enable: true,
-            distance: 150,
-            color: '#ffffff',
-            opacity: 0.4,
-            width: 1
-        },
-        move: {
-            enable: true,
-            speed: 6,
-            direction: 'none',
-            random: false,
-            straight: false,
-            out_mode: 'out',
-            bounce: false
-        }
-    },
-    interactivity: {
-        detect_on: 'canvas',
-        events: {
-            onhover: {
-                enable: true,
-                mode: 'repulse'
-            },
-            onclick: {
-                enable: true,
-                mode: 'push'
-            },
-            resize: true
-        }
-    },
-    retina_detect: true
-});
-
-// Counter animation
-document.addEventListener('DOMContentLoaded', function() {
-    const counters = document.querySelectorAll('.counter');
-    
-    counters.forEach(counter => {
-        const target = parseInt(counter.textContent);
-        let current = 0;
-        const increment = target / 100;
-        
-        function updateCounter() {
-            if (current < target) {
-                current += increment;
-                counter.textContent = Math.ceil(current) + '+';
-                setTimeout(updateCounter, 10);
-            } else {
-                counter.textContent = target + '+';
-            }
-        }
-        
-        updateCounter();
-    });
-});
-</script>
-{% endblock %}
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
