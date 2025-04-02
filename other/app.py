@@ -10,6 +10,11 @@ import os
 from werkzeug.utils import secure_filename
 from flask_login import login_required, current_user, login_user, LoginManager, logout_user
 from dotenv import load_dotenv
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Load environment variables
 load_dotenv()
@@ -57,7 +62,7 @@ def init_db():
         try:
             # Create all tables if they don't exist
             db.create_all()
-            print("Database tables verified successfully!")
+            logger.info("Database tables created successfully!")
             
             # Create default users if they don't exist
             if not User.query.filter_by(username='admin').first():
@@ -67,7 +72,7 @@ def init_db():
                     role='admin'
                 )
                 db.session.add(admin)
-                print("Created default admin user")
+                logger.info("Created default admin user")
                 
             if not User.query.filter_by(username='processor').first():
                 processor = User(
@@ -76,7 +81,7 @@ def init_db():
                     role='processor'
                 )
                 db.session.add(processor)
-                print("Created default processor user")
+                logger.info("Created default processor user")
                 
             if not User.query.filter_by(username='buyer').first():
                 buyer = User(
@@ -85,7 +90,7 @@ def init_db():
                     role='buyer'
                 )
                 db.session.add(buyer)
-                print("Created default buyer user")
+                logger.info("Created default buyer user")
             
             # Create default cost settings if they don't exist
             if not CostPerKg.query.first():
@@ -95,13 +100,16 @@ def init_db():
                     copper_cost=8
                 )
                 db.session.add(cost_settings)
-                print("Created default cost settings")
+                logger.info("Created default cost settings")
                 
             db.session.commit()
-            print("Database initialization completed successfully!")
+            logger.info("Database initialization completed successfully!")
         except Exception as e:
-            print(f"Error during database initialization: {str(e)}")
+            logger.error(f"Error during database initialization: {str(e)}")
             db.session.rollback()
+
+# Initialize the database when the application starts
+init_db()
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -113,28 +121,41 @@ def home():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        username = request.form.get('username')
-        password = request.form.get('password')
-        
-        user = User.query.filter_by(username=username).first()
-        
-        if user and user.check_password(password):
-            login_user(user)
-            flash('Login successful!', 'success')
+        try:
+            username = request.form.get('username')
+            password = request.form.get('password')
             
-            if user.role == 'admin':
-                return redirect(url_for('admin_dashboard'))
-            elif user.role == 'processor':
-                return redirect(url_for('processor_dashboard'))
-            elif user.role == 'buyer':
-                return redirect(url_for('buyer_dashboard'))
-            elif user.role == 'recycler':
-                return redirect(url_for('recycler_dashboard'))
+            logger.info(f"Login attempt for user: {username}")
+            
+            if not username or not password:
+                flash('Username and password are required.', 'error')
+                logger.warning(f"Login failed: Missing username or password")
+                return render_template('login.html')
+            
+            user = User.query.filter_by(username=username).first()
+            
+            if user and user.check_password(password):
+                login_user(user)
+                flash('Login successful!', 'success')
+                logger.info(f"User {username} logged in successfully")
+                
+                if user.role == 'admin':
+                    return redirect(url_for('admin_dashboard'))
+                elif user.role == 'processor':
+                    return redirect(url_for('processor_dashboard'))
+                elif user.role == 'buyer':
+                    return redirect(url_for('buyer_dashboard'))
+                elif user.role == 'recycler':
+                    return redirect(url_for('recycler_dashboard'))
+                else:
+                    return redirect(url_for('user_dashboard'))
             else:
-                return redirect(url_for('user_dashboard'))
-        else:
-            flash('Invalid username or password.', 'error')
-
+                flash('Invalid username or password.', 'error')
+                logger.warning(f"Login failed: Invalid credentials for user {username}")
+        except Exception as e:
+            logger.error(f"Error during login: {str(e)}")
+            flash('An error occurred during login. Please try again.', 'error')
+    
     return render_template('login.html')
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -660,7 +681,24 @@ def recycler_dashboard():
     recycler_scraps = Scrap.query.filter_by(user_id=current_user.id).all()
     return render_template("recycler_dashboard.html", scrap_data=recycler_scraps)
 
+@app.route('/test-db')
+def test_db():
+    try:
+        # Try to query the database
+        user_count = User.query.count()
+        return jsonify({
+            'status': 'success',
+            'message': f'Database connection successful. User count: {user_count}',
+            'database_url': app.config['SQLALCHEMY_DATABASE_URI'].split('@')[-1] if '@' in app.config['SQLALCHEMY_DATABASE_URI'] else 'sqlite'
+        })
+    except Exception as e:
+        logger.error(f"Database connection error: {str(e)}")
+        return jsonify({
+            'status': 'error',
+            'message': f'Database connection failed: {str(e)}',
+            'database_url': app.config['SQLALCHEMY_DATABASE_URI'].split('@')[-1] if '@' in app.config['SQLALCHEMY_DATABASE_URI'] else 'sqlite'
+        }), 500
+
 if __name__ == '__main__':
-    init_db()  # Initialize database tables
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=False)
