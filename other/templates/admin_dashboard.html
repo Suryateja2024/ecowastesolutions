@@ -1,0 +1,342 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">Admin Dashboard</h1>
+        <div class="d-flex align-items-center">
+            <span class="me-3">Welcome, {{ current_user.username }}</span>
+            <a href="{{ url_for('logout') }}" class="btn btn-outline-danger">
+                <i class="fas fa-sign-out-alt me-2"></i>Logout
+            </a>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row g-4 mb-4">
+        <!-- Total Users -->
+        <div class="col-md-3" data-aos="fade-up">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-subtitle mb-2 text-muted">Total Users</h6>
+                            <h2 class="card-title mb-0">{{ total_users }}</h2>
+            </div>
+                        <div class="icon-box bg-primary">
+                            <i class="fas fa-users text-white"></i>
+                </div>
+                </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Total Processors -->
+        <div class="col-md-3" data-aos="fade-up" data-aos-delay="100">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                            <h6 class="card-subtitle mb-2 text-muted">Total Processors</h6>
+                            <h2 class="card-title mb-0">{{ total_processors }}</h2>
+                        </div>
+                        <div class="icon-box bg-success">
+                            <i class="fas fa-industry text-white"></i>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+            
+        <!-- Total Buyers -->
+        <div class="col-md-3" data-aos="fade-up" data-aos-delay="200">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                            <h6 class="card-subtitle mb-2 text-muted">Total Buyers</h6>
+                            <h2 class="card-title mb-0">{{ total_buyers }}</h2>
+                        </div>
+                        <div class="icon-box bg-info">
+                            <i class="fas fa-shopping-cart text-white"></i>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Total Revenue -->
+        <div class="col-md-3" data-aos="fade-up" data-aos-delay="300">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                            <h6 class="card-subtitle mb-2 text-muted">Total Revenue</h6>
+                            <h2 class="card-title mb-0">₹{{ "%.2f"|format(total_revenue) }}</h2>
+                        </div>
+                        <div class="icon-box bg-warning">
+                            <i class="fas fa-rupee-sign text-white"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                        </div>
+                    </div>
+
+    <!-- Main Content -->
+    <div class="row">
+        <!-- Cost Settings -->
+        <div class="col-md-4 mb-4" data-aos="fade-right">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Cost Settings</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label class="form-label">Steel Cost (per kg)</label>
+                            <div class="input-group">
+                                <span class="input-group-text">₹</span>
+                                <input type="number" step="0.01" class="form-control" name="steel_cost" value="{{ cost_settings.steel_cost }}" required>
+                        </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Aluminium Cost (per kg)</label>
+                            <div class="input-group">
+                                <span class="input-group-text">₹</span>
+                                <input type="number" step="0.01" class="form-control" name="aluminium_cost" value="{{ cost_settings.aluminium_cost }}" required>
+                    </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Copper Cost (per kg)</label>
+                            <div class="input-group">
+                                <span class="input-group-text">₹</span>
+                                <input type="number" step="0.01" class="form-control" name="copper_cost" value="{{ cost_settings.copper_cost }}" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Update Costs</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Pending Scraps -->
+        <div class="col-md-8 mb-4" data-aos="fade-left">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Pending Scraps</h5>
+            </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                    <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Type</th>
+                                    <th>Weight</th>
+                                    <th>Price</th>
+                                    <th>User</th>
+                                    <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                                {% for scrap in pending_scraps %}
+                                <tr>
+                                    <td>{{ scrap.name }}</td>
+                                    <td>{{ scrap.condition }}</td>
+                                    <td>{{ scrap.weight }} kg</td>
+                                    <td>₹{{ "%.2f"|format(scrap.price) }}</td>
+                                    <td>{{ scrap.user.username }}</td>
+                                    <td>
+                                        <form method="POST" action="{{ url_for('approve_scrap', scrap_id=scrap.id) }}" class="d-inline">
+                                            <button type="submit" class="btn btn-success btn-sm">
+                                                <i class="fas fa-check"></i> Approve
+                                        </button>
+                                    </form>
+                                        <form method="POST" action="{{ url_for('reject_scrap', scrap_id=scrap.id) }}" class="d-inline">
+                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                <i class="fas fa-times"></i> Reject
+                                        </button>
+                                    </form>
+                            </td>
+                        </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="6" class="text-center">No pending scraps</td>
+                                </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+            </div>
+        </div>
+
+        <!-- Approved Scraps -->
+        <div class="col-md-6 mb-4" data-aos="fade-up">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Approved Scraps</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                    <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Type</th>
+                                    <th>Weight</th>
+                                    <th>Price</th>
+                                    <th>User</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                                {% for scrap in approved_scraps %}
+                                <tr>
+                                    <td>{{ scrap.name }}</td>
+                                    <td>{{ scrap.condition }}</td>
+                                    <td>{{ scrap.weight }} kg</td>
+                                    <td>₹{{ "%.2f"|format(scrap.price) }}</td>
+                                    <td>{{ scrap.user.username }}</td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="5" class="text-center">No approved scraps</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+                        </div>
+                    </div>
+                    
+        <!-- Rejected Scraps -->
+        <div class="col-md-6 mb-4" data-aos="fade-up">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Rejected Scraps</h5>
+                            </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Type</th>
+                                    <th>Weight</th>
+                                    <th>Price</th>
+                                    <th>User</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for scrap in rejected_scraps %}
+                                <tr>
+                                    <td>{{ scrap.name }}</td>
+                                    <td>{{ scrap.condition }}</td>
+                                    <td>{{ scrap.weight }} kg</td>
+                                    <td>₹{{ "%.2f"|format(scrap.price) }}</td>
+                                    <td>{{ scrap.user.username }}</td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="5" class="text-center">No rejected scraps</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+        <!-- Recent Purchases -->
+        <div class="col-12" data-aos="fade-up">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Recent Purchases</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th>Weight</th>
+                                    <th>Price</th>
+                                    <th>Buyer</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for purchase in recent_purchases %}
+                                <tr>
+                                    <td>{{ purchase.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                                    <td>{{ purchase.scrap_type }}</td>
+                                    <td>{{ purchase.weight }} kg</td>
+                                    <td>₹{{ "%.2f"|format(purchase.price) }}</td>
+                                    <td>{{ purchase.buyer.username }}</td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="5" class="text-center">No recent purchases</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    border: none;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.icon-box {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.table th {
+    border-top: none;
+    font-weight: 600;
+}
+
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+
+.input-group-text {
+    background-color: #f8f9fa;
+    border-right: none;
+}
+
+.form-control:focus {
+    border-color: #ced4da;
+    box-shadow: none;
+}
+
+.form-control:focus + .input-group-text {
+    border-color: #ced4da;
+}
+</style>
+{% endblock %}

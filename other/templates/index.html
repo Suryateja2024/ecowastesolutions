@@ -1,0 +1,876 @@
+{% extends "base.html" %}
+
+{% block title %}Metal Waste Management - Sustainable Recycling Solutions{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="hero-particles" id="particles-js"></div>
+    <div class="hero-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+        <div class="shape shape-4"></div>
+        <div class="shape shape-5"></div>
+    </div>
+    <div class="container">
+        <div class="row min-vh-100 align-items-center">
+            <div class="col-lg-8 mx-auto text-center" data-aos="fade-up">
+                <div class="hero-content">
+                    <div class="badge-wrapper">
+                        <span class="badge bg-gradient">Eco-Friendly Solution</span>
+                    </div>
+                    <h1 class="display-2 fw-bold text-white mb-4">
+                        Transform Metal Waste into <span class="gradient-text">Valuable Resources</span>
+                    </h1>
+                    <p class="lead text-white-50 mb-5">
+                        Join our sustainable metal recycling platform. Connect with processors, buyers, and recyclers to create a greener future.
+                    </p>
+                    <div class="d-flex justify-content-center gap-4">
+                        <a href="{{ url_for('register') }}" class="btn btn-gradient btn-lg">
+                            <i class="fas fa-user-plus me-2"></i>Get Started
+                        </a>
+                        <a href="#features" class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-info-circle me-2"></i>Learn More
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats-section">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-3" data-aos="fade-up" data-aos-delay="100">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-weight-hanging"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 class="counter">1000+</h3>
+                        <p>Tons Recycled</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3" data-aos="fade-up" data-aos-delay="200">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 class="counter">500+</h3>
+                        <p>Happy Customers</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3" data-aos="fade-up" data-aos-delay="300">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 class="counter">50+</h3>
+                        <p>Partner Companies</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3" data-aos="fade-up" data-aos-delay="400">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 class="counter">10+</h3>
+                        <p>Cities Covered</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section id="features" class="features-section">
+    <div class="container">
+        <div class="section-header text-center" data-aos="fade-up">
+            <span class="section-badge">Why Choose Us</span>
+            <h2 class="section-title">Experience the Benefits</h2>
+            <p class="section-subtitle">Join our comprehensive metal waste management platform</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-recycle"></i>
+                    </div>
+                    <h3>Sustainable Recycling</h3>
+                    <p>Contribute to environmental conservation by properly recycling metal waste</p>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-hand-holding-usd"></i>
+                    </div>
+                    <h3>Fair Pricing</h3>
+                    <p>Get competitive rates for your metal waste through our transparent pricing system</p>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-truck"></i>
+                    </div>
+                    <h3>Convenient Pickup</h3>
+                    <p>Schedule flexible pickup slots for your metal waste collection</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Process Section -->
+<section class="process-section">
+    <div class="container">
+        <div class="section-header text-center" data-aos="fade-up">
+            <span class="section-badge">How It Works</span>
+            <h2 class="section-title">Simple Steps to Start</h2>
+            <p class="section-subtitle">Follow these easy steps to recycle your metal waste</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-3" data-aos="fade-up" data-aos-delay="100">
+                <div class="process-card">
+                    <div class="process-number">01</div>
+                    <div class="process-icon">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <h4>Register</h4>
+                    <p>Create your account as a user, recycler, processor, or buyer</p>
+                </div>
+            </div>
+            <div class="col-md-3" data-aos="fade-up" data-aos-delay="200">
+                <div class="process-card">
+                    <div class="process-number">02</div>
+                    <div class="process-icon">
+                        <i class="fas fa-weight-hanging"></i>
+                    </div>
+                    <h4>Submit Scrap</h4>
+                    <p>List your metal waste with details and images</p>
+                </div>
+            </div>
+            <div class="col-md-3" data-aos="fade-up" data-aos-delay="300">
+                <div class="process-card">
+                    <div class="process-number">03</div>
+                    <div class="process-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h4>Get Approved</h4>
+                    <p>Our team reviews and approves your submission</p>
+                </div>
+            </div>
+            <div class="col-md-3" data-aos="fade-up" data-aos-delay="400">
+                <div class="process-card">
+                    <div class="process-number">04</div>
+                    <div class="process-icon">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                    <h4>Earn Money</h4>
+                    <p>Receive payment for your recycled metal waste</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Materials Section -->
+<section class="materials-section">
+    <div class="container">
+        <div class="section-header text-center" data-aos="fade-up">
+            <span class="section-badge">Materials</span>
+            <h2 class="section-title">Materials We Accept</h2>
+            <p class="section-subtitle">We process various types of metal waste</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="material-card">
+                    <div class="material-image">
+                        <img src="https://images.unsplash.com/photo-1581092334247-ddef2a41fdd4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1471&q=80" alt="Steel" class="img-fluid">
+                        <div class="material-overlay">
+                            <i class="fas fa-cube"></i>
+                        </div>
+                    </div>
+                    <div class="material-content">
+                        <h3>Steel</h3>
+                        <p>All types of steel scrap including construction materials</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="material-card">
+                    <div class="material-image">
+                        <img src="https://images.unsplash.com/photo-1581092334247-ddef2a41fdd4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1471&q=80" alt="Aluminium" class="img-fluid">
+                        <div class="material-overlay">
+                            <i class="fas fa-circle"></i>
+                        </div>
+                    </div>
+                    <div class="material-content">
+                        <h3>Aluminium</h3>
+                        <p>Aluminum cans, sheets, and other aluminum products</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+                <div class="material-card">
+                    <div class="material-image">
+                        <img src="https://images.unsplash.com/photo-1581092334247-ddef2a41fdd4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1471&q=80" alt="Copper" class="img-fluid">
+                        <div class="material-overlay">
+                            <i class="fas fa-circle-notch"></i>
+                        </div>
+                    </div>
+                    <div class="material-content">
+                        <h3>Copper</h3>
+                        <p>Copper wires, pipes, and other copper materials</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="container">
+        <div class="cta-card">
+            <div class="row align-items-center">
+                <div class="col-lg-8" data-aos="fade-right">
+                    <h2 class="display-4 fw-bold mb-3">Ready to Start Recycling?</h2>
+                    <p class="lead mb-0">Join our platform today and make a difference in the environment</p>
+                </div>
+                <div class="col-lg-4 text-lg-end" data-aos="fade-left">
+                    <a href="{{ url_for('register') }}" class="btn btn-gradient btn-lg">
+                        <i class="fas fa-user-plus me-2"></i>Register Now
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+/* Global Styles */
+:root {
+    --primary-color: #00b894;
+    --secondary-color: #00cec9;
+    --accent-color: #6c5ce7;
+    --dark-color: #2d3436;
+    --light-color: #f5f6fa;
+    --gradient: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    --gradient-2: linear-gradient(135deg, var(--accent-color), var(--primary-color));
+    --shadow: 0 10px 30px rgba(0,0,0,0.1);
+    --transition: all 0.3s ease;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    overflow-x: hidden;
+}
+
+/* Section Headers */
+.section-header {
+    margin-bottom: 4rem;
+}
+
+.section-badge {
+    background: var(--gradient);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-size: 0.9rem;
+            font-weight: 500;
+    margin-bottom: 1rem;
+            display: inline-block;
+}
+
+.section-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--dark-color);
+}
+
+.section-subtitle {
+    color: #666;
+    font-size: 1.1rem;
+        }
+        
+        /* Hero Section */
+.hero-section {
+    min-height: 100vh;
+            position: relative;
+    background: var(--dark-color);
+            overflow: hidden;
+        }
+        
+.hero-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+    z-index: 1;
+}
+
+.hero-shapes {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+            z-index: 1;
+}
+
+.shape {
+    position: absolute;
+    border-radius: 50%;
+    background: var(--gradient);
+    opacity: 0.1;
+    animation: float 20s infinite;
+}
+
+.shape-1 {
+    width: 300px;
+    height: 300px;
+    top: -100px;
+    left: -100px;
+    animation-delay: 0s;
+}
+
+.shape-2 {
+    width: 200px;
+    height: 200px;
+    top: 50%;
+    right: -50px;
+    background: var(--gradient-2);
+    animation-delay: -5s;
+}
+
+.shape-3 {
+    width: 150px;
+    height: 150px;
+    bottom: -50px;
+    left: 20%;
+    animation-delay: -10s;
+}
+
+.shape-4 {
+    width: 100px;
+    height: 100px;
+    top: 20%;
+    right: 15%;
+    background: var(--gradient-2);
+    animation-delay: -15s;
+}
+
+.shape-5 {
+    width: 80px;
+    height: 80px;
+    bottom: 20%;
+    right: 30%;
+    animation-delay: -20s;
+}
+
+.hero-content {
+            position: relative;
+    z-index: 2;
+}
+
+.badge-wrapper {
+    margin-bottom: 2rem;
+}
+
+.badge.bg-gradient {
+    background: var(--gradient);
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    border-radius: 50px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.gradient-text {
+    background: var(--gradient-2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+            position: relative;
+}
+
+.gradient-text::after {
+            content: '';
+            position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--gradient-2);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s ease;
+}
+
+.gradient-text:hover::after {
+    transform: scaleX(1);
+}
+
+/* Stats Section */
+.stats-section {
+    padding: 6rem 0;
+    background: var(--light-color);
+}
+
+.stat-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 20px;
+            display: flex;
+            align-items: center;
+    gap: 1.5rem;
+    box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+        
+.stat-card:hover {
+            transform: translateY(-10px);
+}
+
+.stat-icon {
+    width: 70px;
+    height: 70px;
+    background: var(--gradient);
+    border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+    font-size: 2rem;
+    color: white;
+}
+
+.stat-content h3 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0;
+    color: var(--dark-color);
+}
+
+.stat-content p {
+    margin: 0;
+    color: #666;
+    font-size: 1.1rem;
+}
+
+/* Features Section */
+.features-section {
+    padding: 6rem 0;
+    background: white;
+}
+
+.feature-card {
+    background: white;
+    padding: 3rem 2rem;
+    border-radius: 20px;
+    text-align: center;
+            transition: var(--transition);
+    box-shadow: var(--shadow);
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+.feature-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+.feature-icon {
+    width: 90px;
+    height: 90px;
+    background: var(--gradient);
+    border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+    margin: 0 auto 2rem;
+    font-size: 2.5rem;
+    color: white;
+}
+
+.feature-card h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--dark-color);
+}
+
+.feature-card p {
+    color: #666;
+    margin: 0;
+}
+
+/* Process Section */
+.process-section {
+    padding: 6rem 0;
+    background: var(--light-color);
+}
+
+.process-card {
+    background: white;
+    padding: 3rem 2rem;
+    border-radius: 20px;
+    text-align: center;
+    position: relative;
+    box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+        
+.process-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+.process-number {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 40px;
+    background: var(--gradient);
+    color: white;
+    border-radius: 50%;
+            display: flex;
+            align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.process-icon {
+    width: 80px;
+    height: 80px;
+    background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+    margin: 0 auto 2rem;
+    font-size: 2rem;
+    color: white;
+        }
+        
+.process-card h4 {
+    font-size: 1.3rem;
+            font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--dark-color);
+}
+
+.process-card p {
+    color: #666;
+    margin: 0;
+}
+
+/* Materials Section */
+.materials-section {
+    padding: 6rem 0;
+    background: white;
+}
+
+.material-card {
+    background: white;
+    border-radius: 20px;
+            overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+}
+
+.material-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+.material-image {
+    position: relative;
+    height: 250px;
+    overflow: hidden;
+}
+
+.material-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: var(--transition);
+}
+
+.material-card:hover .material-image img {
+    transform: scale(1.1);
+}
+
+.material-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+    opacity: 0;
+            transition: var(--transition);
+        }
+        
+.material-card:hover .material-overlay {
+    opacity: 1;
+}
+
+.material-overlay i {
+    font-size: 3rem;
+    color: white;
+}
+
+.material-content {
+    padding: 2rem;
+    text-align: center;
+}
+
+.material-content h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--dark-color);
+}
+
+.material-content p {
+    color: #666;
+    margin: 0;
+}
+
+/* CTA Section */
+.cta-section {
+    padding: 6rem 0;
+    background: var(--light-color);
+}
+
+.cta-card {
+    background: var(--gradient);
+    padding: 4rem;
+    border-radius: 30px;
+    color: white;
+    box-shadow: var(--shadow);
+}
+
+/* Buttons */
+.btn-gradient {
+    background: var(--gradient);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    font-weight: 500;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-gradient::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--gradient-2);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.btn-gradient:hover::before {
+    opacity: 1;
+}
+
+.btn-gradient span {
+    position: relative;
+    z-index: 1;
+}
+
+.btn-gradient:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    color: white;
+}
+
+.btn-outline-light {
+    border: 2px solid white;
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    font-weight: 500;
+            transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-outline-light::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: white;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.3s ease;
+}
+
+.btn-outline-light:hover::before {
+    transform: scaleX(1);
+}
+
+.btn-outline-light span {
+    position: relative;
+    z-index: 1;
+}
+
+.btn-outline-light:hover {
+    color: var(--dark-color);
+    transform: translateY(-3px);
+}
+
+/* Animations */
+@keyframes float {
+    0% {
+        transform: translate(0, 0) rotate(0deg);
+    }
+    25% {
+        transform: translate(50px, 50px) rotate(90deg);
+            }
+            50% {
+        transform: translate(0, 100px) rotate(180deg);
+    }
+    75% {
+        transform: translate(-50px, 50px) rotate(270deg);
+            }
+            100% {
+        transform: translate(0, 0) rotate(360deg);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hero-section {
+        min-height: auto;
+        padding: 4rem 0;
+    }
+    
+    .hero-shapes {
+                display: none;
+            }
+            
+    .process-card {
+        margin-bottom: 2rem;
+            }
+            
+    .cta-card {
+        padding: 2rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+}
+</style>
+
+<!-- Particles.js -->
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<script>
+particlesJS('particles-js', {
+    particles: {
+        number: {
+            value: 80,
+            density: {
+                enable: true,
+                value_area: 800
+            }
+        },
+        color: {
+            value: '#ffffff'
+        },
+        shape: {
+            type: 'circle'
+        },
+        opacity: {
+            value: 0.5,
+            random: false
+        },
+        size: {
+            value: 3,
+            random: true
+        },
+        line_linked: {
+            enable: true,
+            distance: 150,
+            color: '#ffffff',
+            opacity: 0.4,
+            width: 1
+        },
+        move: {
+            enable: true,
+            speed: 6,
+            direction: 'none',
+            random: false,
+            straight: false,
+            out_mode: 'out',
+            bounce: false
+        }
+    },
+    interactivity: {
+        detect_on: 'canvas',
+        events: {
+            onhover: {
+                enable: true,
+                mode: 'repulse'
+            },
+            onclick: {
+                enable: true,
+                mode: 'push'
+            },
+            resize: true
+        }
+    },
+    retina_detect: true
+});
+
+// Counter animation
+document.addEventListener('DOMContentLoaded', function() {
+    const counters = document.querySelectorAll('.counter');
+    
+    counters.forEach(counter => {
+        const target = parseInt(counter.textContent);
+        let current = 0;
+        const increment = target / 100;
+        
+        function updateCounter() {
+            if (current < target) {
+                current += increment;
+                counter.textContent = Math.ceil(current) + '+';
+                setTimeout(updateCounter, 10);
+            } else {
+                counter.textContent = target + '+';
+            }
+        }
+        
+        updateCounter();
+    });
+});
+</script>
+{% endblock %}

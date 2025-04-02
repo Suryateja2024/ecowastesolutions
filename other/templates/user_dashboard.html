@@ -1,0 +1,278 @@
+{% extends "base.html" %}
+
+{% block title %}User Dashboard - Metal Waste Management{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <h2 class="fw-bold">
+                <i class="fas fa-user-circle text-primary me-2"></i>User Dashboard
+            </h2>
+            <div class="user-info">
+                <span class="text-muted me-3">
+                    <i class="fas fa-user-circle me-1"></i>{{ current_user.username }}
+                </span>
+                <a href="{{ url_for('logout') }}" class="btn btn-outline-danger">
+                    <i class="fas fa-sign-out-alt me-1"></i>Logout
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+        <div class="stat-card">
+            <i class="fas fa-weight-hanging"></i>
+            <h3>{{ scrap_data|length }}</h3>
+            <p>Total Scraps</p>
+        </div>
+    </div>
+    <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+        <div class="stat-card">
+            <i class="fas fa-check-circle"></i>
+            <h3>{{ scrap_data|selectattr('status', 'equalto', 'approved')|list|length }}</h3>
+            <p>Approved Scraps</p>
+        </div>
+    </div>
+    <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+        <div class="stat-card">
+            <i class="fas fa-clock"></i>
+            <h3>{{ scrap_data|selectattr('status', 'equalto', 'pending')|list|length }}</h3>
+            <p>Pending Scraps</p>
+        </div>
+    </div>
+</div>
+
+<!-- Submit Scrap Form -->
+<div class="row">
+    <div class="col-md-6" data-aos="fade-right">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-plus-circle me-2"></i>Submit New Scrap
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+                    <div class="mb-3">
+                        <label class="form-label">Scrap Name</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-tag"></i>
+                            </span>
+                            <input type="text" class="form-control" name="name" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Type</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-recycle"></i>
+                            </span>
+                            <select class="form-select" name="type" required>
+                                <option value="">Select type</option>
+                                <option value="steel">Steel</option>
+                                <option value="aluminium">Aluminium</option>
+                                <option value="copper">Copper</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Weight (kg)</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-weight-hanging"></i>
+                            </span>
+                            <input type="number" class="form-control" name="weight" min="0" step="0.01" required>
+                            <span class="input-group-text">kg</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Price (per kg)</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-rupee-sign"></i>
+                            </span>
+                            <input type="number" class="form-control" name="price" min="0" step="0.01" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Pickup Date</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-calendar"></i>
+                            </span>
+                            <input type="date" class="form-control" name="pickup_date" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Pickup Slot</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-clock"></i>
+                            </span>
+                            <select class="form-select" name="pickup_slot" required>
+                                <option value="">Select slot</option>
+                                <option value="morning">Morning (9 AM - 12 PM)</option>
+                                <option value="afternoon">Afternoon (12 PM - 4 PM)</option>
+                                <option value="evening">Evening (4 PM - 8 PM)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Scrap Image</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-image"></i>
+                            </span>
+                            <input type="file" class="form-control" name="image" accept="image/*">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-paper-plane me-2"></i>Submit Scrap
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- My Scraps -->
+    <div class="col-md-6" data-aos="fade-left">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-list me-2"></i>My Scraps
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if scrap_data %}
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Type</th>
+                                    <th>Weight</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for scrap in scrap_data %}
+                                <tr>
+                                    <td>{{ scrap.name }}</td>
+                                    <td>{{ scrap.condition|title }}</td>
+                                    <td>{{ scrap.weight }} kg</td>
+                                    <td>
+                                        <span class="badge bg-{{ 'success' if scrap.status == 'approved' else 'warning' if scrap.status == 'pending' else 'danger' }}">
+                                            {{ scrap.status|title }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-recycle fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">No scraps submitted yet</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.stat-card {
+    background: linear-gradient(135deg, #2c3e50, #3498db);
+    color: white;
+    padding: 1.5rem;
+    border-radius: 15px;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.stat-card i {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.stat-card h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.card-header {
+    border-radius: 15px 15px 0 0 !important;
+    padding: 1rem;
+}
+
+.table {
+    margin-bottom: 0;
+}
+
+.table th {
+    border-top: none;
+    font-weight: 600;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+}
+
+.input-group-text {
+    background: #f8f9fa;
+    border: 2px solid #e9ecef;
+}
+
+.form-control:focus {
+    border-color: #3498db;
+    box-shadow: none;
+}
+
+.badge {
+    padding: 0.5em 1em;
+    font-weight: 500;
+}
+</style>
+
+<script>
+// Form validation
+(function () {
+    'use strict'
+    var forms = document.querySelectorAll('.needs-validation')
+    Array.prototype.slice.call(forms).forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault()
+                event.stopPropagation()
+            }
+            form.classList.add('was-validated')
+        }, false)
+    })
+})()
+</script>
+{% endblock %}

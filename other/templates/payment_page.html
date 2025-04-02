@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block title %}Payment{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Payment Details</h4>
+                </div>
+                <div class="card-body">
+                    <!-- Order Summary -->
+                    <div class="mb-4">
+                        <h5>Order Summary</h5>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Weight (kg)</th>
+                                        <th>Price (₹)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in cart_items %}
+                                    <tr>
+                                        <td>{{ item.type|title }}</td>
+                                        <td>{{ item.weight }}</td>
+                                        <td>₹{{ "%.2f"|format(item.price) }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th colspan="2" class="text-end">Total Amount:</th>
+                                        <th>₹{{ "%.2f"|format(grand_total) }}</th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Payment Button -->
+                    <div class="text-center">
+                        <button id="pay-button" class="btn btn-primary btn-lg">
+                            Pay ₹{{ "%.2f"|format(grand_total) }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Razorpay Script -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+document.getElementById('pay-button').addEventListener('click', function() {
+    // Create order
+    fetch('/create_order', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Configure Razorpay options
+        var options = {
+            "key": "{{ razorpay_key_id }}",
+            "amount": data.amount,
+            "currency": data.currency,
+            "name": "Metal Waste Management",
+            "description": "Purchase of Processed Metals",
+            "order_id": data.order_id,
+            "handler": function (response) {
+                // Create form and submit to payment_success
+                var form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '/payment_success';
+
+                // Add payment details
+                var fields = {
+                    'razorpay_payment_id': response.razorpay_payment_id,
+                    'razorpay_order_id': response.razorpay_order_id,
+                    'razorpay_signature': response.razorpay_signature
+                };
+
+                for (var key in fields) {
+                    var input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = key;
+                    input.value = fields[key];
+                    form.appendChild(input);
+                }
+
+                document.body.appendChild(form);
+                form.submit();
+            },
+            "prefill": {
+                "name": "{{ current_user.username }}",
+                "email": "{{ current_user.email if current_user.email else 'user@example.com' }}"
+            },
+            "theme": {
+                "color": "#0d6efd"
+            }
+        };
+
+        // Initialize Razorpay
+        var rzp = new Razorpay(options);
+        rzp.open();
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred. Please try again.');
+    });
+});
+</script>
+
+<style>
+.card {
+    border: none;
+    border-radius: 10px;
+}
+
+.card-header {
+    border-radius: 10px 10px 0 0 !important;
+}
+
+.table th {
+    border-top: none;
+    font-weight: 600;
+}
+
+.btn-primary {
+    padding: 12px 30px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(13, 110, 253, 0.3);
+}
+</style>
+{% endblock %}

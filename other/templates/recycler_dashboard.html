@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recycler Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">Metal Waste Management</a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <h2>Recycler Dashboard</h2>
+        
+        <!-- Submit Scrap Form -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h4>Submit Scrap</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Scrap Name</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="type" class="form-label">Scrap Type</label>
+                        <select class="form-select" id="type" name="type" required>
+                            <option value="steel">Steel</option>
+                            <option value="aluminium">Aluminium</option>
+                            <option value="copper">Copper</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="weight" class="form-label">Weight (kg)</label>
+                        <input type="number" step="0.01" class="form-control" id="weight" name="weight" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="price" class="form-label">Price per kg</label>
+                        <input type="number" step="0.01" class="form-control" id="price" name="price" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="pickup_date" class="form-label">Pickup Date</label>
+                        <input type="date" class="form-control" id="pickup_date" name="pickup_date" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="pickup_slot" class="form-label">Pickup Time Slot</label>
+                        <select class="form-select" id="pickup_slot" name="pickup_slot" required>
+                            <option value="morning">Morning (9 AM - 12 PM)</option>
+                            <option value="afternoon">Afternoon (12 PM - 4 PM)</option>
+                            <option value="evening">Evening (4 PM - 8 PM)</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit Scrap</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Submitted Scraps -->
+        <div class="card">
+            <div class="card-header">
+                <h4>My Submitted Scraps</h4>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>Weight (kg)</th>
+                                <th>Price per kg</th>
+                                <th>Pickup Date</th>
+                                <th>Pickup Slot</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for scrap in scrap_data %}
+                            <tr>
+                                <td>{{ scrap.name }}</td>
+                                <td>{{ scrap.condition }}</td>
+                                <td>{{ scrap.weight }}</td>
+                                <td>{{ scrap.price }}</td>
+                                <td>{{ scrap.pickup_date }}</td>
+                                <td>{{ scrap.pickup_slot }}</td>
+                                <td>
+                                    <span class="badge {% if scrap.status == 'approved' %}bg-success{% elif scrap.status == 'rejected' %}bg-danger{% else %}bg-warning{% endif %}">
+                                        {{ scrap.status }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 
