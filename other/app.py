@@ -213,13 +213,28 @@ def user_dashboard():
         pickup_date = datetime.strptime(request.form['pickup_date'], '%Y-%m-%d').date()
         pickup_slot = request.form['pickup_slot']
         
+        # Check if a similar scrap entry already exists
+        existing_scrap = Scrap.query.filter_by(
+            name=name,
+            condition=condition,
+            weight=weight,
+            price=price,
+            pickup_date=pickup_date,
+            pickup_slot=pickup_slot,
+            user_id=current_user.id,
+            status='pending'
+        ).first()
+        
+        if existing_scrap:
+            flash('A similar scrap entry is already pending approval.', 'warning')
+            return redirect(url_for('user_dashboard'))
+        
         # Handle image upload
         image_path = None
         if 'image' in request.files:
             file = request.files['image']
             if file and allowed_file(file.filename):
                 filename = secure_filename(file.filename)
-                # Create upload folder if it doesn't exist
                 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
                 image_path = os.path.join('uploads', filename)
@@ -232,26 +247,81 @@ def user_dashboard():
             pickup_date=pickup_date,
             pickup_slot=pickup_slot,
             image_path=image_path,
-            user_id=current_user.id
+            user_id=current_user.id,
+            status='pending'  # Explicitly set status to pending
         )
+        
         db.session.add(new_scrap)
         db.session.commit()
+        flash('Scrap submitted successfully!', 'success')
+        return redirect(url_for('user_dashboard'))
+        
+    # Get only pending scraps for the current user
+    user_scraps = Scrap.query.filter_by(
+        user_id=current_user.id,
+        status='pending'
+    ).all()
     
-    user_scraps = Scrap.query.filter_by(user_id=current_user.id).all()
     return render_template("user_dashboard.html", scrap_data=user_scraps)
 
 @app.route('/submit_scrap', methods=['POST'])
+@login_required
 def submit_scrap():
     try:
         name = request.form['name']
         condition = request.form['condition']
-        weight = request.form['weight']
-        price = request.form['price']
-        pickup_date = request.form['pickup_date']
+        weight = float(request.form['weight'])
+        price = float(request.form['price'])
+        pickup_date = datetime.strptime(request.form['pickup_date'], '%Y-%m-%d').date()
         pickup_slot = request.form['pickup_slot']
-        return "Scrap submitted successfully!"
-    except KeyError as e:
-        return f"Missing form field: {str(e)}", 400
+        
+        # Check if a similar scrap entry already exists
+        existing_scrap = Scrap.query.filter_by(
+            name=name,
+            condition=condition,
+            weight=weight,
+            price=price,
+            pickup_date=pickup_date,
+            pickup_slot=pickup_slot,
+            user_id=current_user.id,
+            status='pending'
+        ).first()
+        
+        if existing_scrap:
+            flash('A similar scrap entry is already pending approval.', 'warning')
+            return redirect(url_for('user_dashboard'))
+        
+        # Handle image upload
+        image_path = None
+        if 'image' in request.files:
+            file = request.files['image']
+            if file and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                image_path = os.path.join('uploads', filename)
+        
+        new_scrap = Scrap(
+            name=name,
+            condition=condition,
+            weight=weight,
+            price=price,
+            pickup_date=pickup_date,
+            pickup_slot=pickup_slot,
+            image_path=image_path,
+            user_id=current_user.id,
+            status='pending'  # Explicitly set status to pending
+        )
+        
+        db.session.add(new_scrap)
+        db.session.commit()
+        flash('Scrap submitted successfully!', 'success')
+        return redirect(url_for('user_dashboard'))
+        
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error submitting scrap: {str(e)}', 'error')
+        return redirect(url_for('user_dashboard'))
 
 @app.route('/processor_dashboard', methods=['GET', 'POST'])
 @login_required
@@ -397,11 +467,19 @@ def approve_scrap(scrap_id):
         flash('Access denied. Admin privileges required.', 'error')
         return redirect(url_for('login'))
     
-    scrap = Scrap.query.get_or_404(scrap_id)
-    scrap.status = 'approved'
-    db.session.commit()
+    try:
+        scrap = Scrap.query.get_or_404(scrap_id)
+        if scrap.status != 'pending':
+            flash('This scrap has already been processed.', 'warning')
+            return redirect(url_for('admin_dashboard'))
+            
+        scrap.status = 'approved'
+        db.session.commit()
+        flash('Scrap approved successfully!', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error approving scrap: {str(e)}', 'error')
     
-    flash('Scrap approved successfully!', 'success')
     return redirect(url_for('admin_dashboard'))
 
 @app.route('/admin/reject_scrap/<int:scrap_id>', methods=['POST'])
@@ -411,11 +489,19 @@ def reject_scrap(scrap_id):
         flash('Access denied. Admin privileges required.', 'error')
         return redirect(url_for('login'))
     
-    scrap = Scrap.query.get_or_404(scrap_id)
-    scrap.status = 'rejected'
-    db.session.commit()
+    try:
+        scrap = Scrap.query.get_or_404(scrap_id)
+        if scrap.status != 'pending':
+            flash('This scrap has already been processed.', 'warning')
+            return redirect(url_for('admin_dashboard'))
+            
+        scrap.status = 'rejected'
+        db.session.commit()
+        flash('Scrap rejected successfully!', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error rejecting scrap: {str(e)}', 'error')
     
-    flash('Scrap rejected successfully!', 'success')
     return redirect(url_for('admin_dashboard'))
 
 @app.route('/buyer/dashboard', methods=['GET', 'POST'])
