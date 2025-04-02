@@ -26,8 +26,9 @@ class Scrap(db.Model):
     price = db.Column(db.Float, nullable=False)
     pickup_date = db.Column(db.Date, nullable=False)
     pickup_slot = db.Column(db.String(50), nullable=False)
+    address = db.Column(db.String(200), nullable=False)
+    image_path = db.Column(db.String(200))
     status = db.Column(db.String(20), default='pending')  # pending, approved, rejected
-    image_path = db.Column(db.String(255))  # Store the path to the image
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     

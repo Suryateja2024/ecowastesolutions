@@ -198,68 +198,17 @@ def register():
             
     return render_template("register.html")
 
-@app.route('/user_dashboard', methods=['GET', 'POST'])
+@app.route('/user_dashboard')
 @login_required
 def user_dashboard():
     if current_user.role != 'user':
         flash('Access denied. User privileges required.', 'error')
         return redirect(url_for('login'))
     
-    if request.method == 'POST':
-        name = request.form['name']
-        condition = request.form['type']
-        weight = float(request.form['weight'])
-        price = float(request.form['price'])
-        pickup_date = datetime.strptime(request.form['pickup_date'], '%Y-%m-%d').date()
-        pickup_slot = request.form['pickup_slot']
-        
-        # Check if a similar scrap entry already exists
-        existing_scrap = Scrap.query.filter_by(
-            name=name,
-            condition=condition,
-            weight=weight,
-            price=price,
-            pickup_date=pickup_date,
-            pickup_slot=pickup_slot,
-            user_id=current_user.id,
-            status='pending'
-        ).first()
-        
-        if existing_scrap:
-            flash('A similar scrap entry is already pending approval.', 'warning')
-            return redirect(url_for('user_dashboard'))
-        
-        # Handle image upload
-        image_path = None
-        if 'image' in request.files:
-            file = request.files['image']
-            if file and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                image_path = os.path.join('uploads', filename)
-        
-        new_scrap = Scrap(
-            name=name,
-            condition=condition,
-            weight=weight,
-            price=price,
-            pickup_date=pickup_date,
-            pickup_slot=pickup_slot,
-            image_path=image_path,
-            user_id=current_user.id,
-            status='pending'  # Explicitly set status to pending
-        )
-        
-        db.session.add(new_scrap)
-        db.session.commit()
-        flash('Scrap submitted successfully!', 'success')
-        return redirect(url_for('user_dashboard'))
-        
-    # Get only pending scraps for the current user
-    user_scraps = Scrap.query.filter_by(
-        user_id=current_user.id,
-        status='pending'
+    # Get all scraps for the current user, ordered by status and date
+    user_scraps = Scrap.query.filter_by(user_id=current_user.id).order_by(
+        Scrap.status.desc(),
+        Scrap.created_at.desc()
     ).all()
     
     return render_template("user_dashboard.html", scrap_data=user_scraps)
@@ -274,6 +223,7 @@ def submit_scrap():
         price = float(request.form['price'])
         pickup_date = datetime.strptime(request.form['pickup_date'], '%Y-%m-%d').date()
         pickup_slot = request.form['pickup_slot']
+        address = request.form['address']  # New address field
         
         # Check if a similar scrap entry already exists
         existing_scrap = Scrap.query.filter_by(
@@ -308,9 +258,10 @@ def submit_scrap():
             price=price,
             pickup_date=pickup_date,
             pickup_slot=pickup_slot,
+            address=address,  # Add address to the scrap
             image_path=image_path,
             user_id=current_user.id,
-            status='pending'  # Explicitly set status to pending
+            status='pending'
         )
         
         db.session.add(new_scrap)
@@ -360,49 +311,30 @@ def processor_dashboard():
         
     return render_template("processor_dashboard.html", scraps=approved_scraps, processed_scrap=processed_scrap)
 
-@app.route('/admin/dashboard', methods=['GET', 'POST'])
+@app.route('/admin/dashboard')
 @login_required
 def admin_dashboard():
     if current_user.role != 'admin':
         flash('Access denied. Admin privileges required.', 'error')
         return redirect(url_for('login'))
     
-    if request.method == 'POST':
-        try:
-            steel_cost = float(request.form.get('steel_cost', 0))
-            aluminium_cost = float(request.form.get('aluminium_cost', 0))
-            copper_cost = float(request.form.get('copper_cost', 0))
-            
-            # Get or create cost settings
-            cost_settings = CostPerKg.query.first()
-            if not cost_settings:
-                cost_settings = CostPerKg()
-                db.session.add(cost_settings)
-            
-            cost_settings.steel_cost = steel_cost
-            cost_settings.aluminium_cost = aluminium_cost
-            cost_settings.copper_cost = copper_cost
-            
-            db.session.commit()
-            flash('Cost settings updated successfully!', 'success')
-        except Exception as e:
-            db.session.rollback()
-            flash(f'Error updating cost settings: {str(e)}', 'error')
-    
-    # Get cost settings
-    cost_settings = CostPerKg.query.first()
-    
-    # Get scraps filtered by status
+    # Get all scraps with their status
     pending_scraps = Scrap.query.filter_by(status='pending').all()
     approved_scraps = Scrap.query.filter_by(status='approved').all()
     rejected_scraps = Scrap.query.filter_by(status='rejected').all()
     
-    # Calculate statistics for each status
+    # Calculate total scraps and weights
     total_scraps = len(pending_scraps) + len(approved_scraps) + len(rejected_scraps)
-    total_weight = sum(scrap.weight for scrap in pending_scraps) + sum(scrap.weight for scrap in approved_scraps) + sum(scrap.weight for scrap in rejected_scraps)
-    total_value = sum(scrap.weight * getattr(cost_settings, f"{scrap.condition.lower()}_cost", 0) for scrap in pending_scraps) + \
-                  sum(scrap.weight * getattr(cost_settings, f"{scrap.condition.lower()}_cost", 0) for scrap in approved_scraps) + \
-                  sum(scrap.weight * getattr(cost_settings, f"{scrap.condition.lower()}_cost", 0) for scrap in rejected_scraps)
+    total_weight = sum(scrap.weight for scrap in pending_scraps) + \
+                  sum(scrap.weight for scrap in approved_scraps) + \
+                  sum(scrap.weight for scrap in rejected_scraps)
+    
+    # Get cost settings
+    cost_settings = CostPerKg.query.first()
+    
+    # Calculate total value
+    total_value = sum(scrap.weight * getattr(cost_settings, f"{scrap.condition.lower()}_cost", 0) 
+                     for scrap in pending_scraps + approved_scraps + rejected_scraps)
     
     # Get processed scrap statistics
     processed_scraps = ProcessedScrap.query.all()
@@ -427,18 +359,6 @@ def admin_dashboard():
     total_processors = User.query.filter_by(role='processor').count()
     total_buyers = User.query.filter_by(role='buyer').count()
     
-    # Get revenue trend data (last 6 months)
-    from datetime import datetime, timedelta
-    revenue_trend = []
-    for i in range(5, -1, -1):
-        month_start = datetime.now() - timedelta(days=30*i)
-        month_end = datetime.now() - timedelta(days=30*(i-1)) if i > 0 else datetime.now()
-        monthly_revenue = Purchase.query.filter(
-            Purchase.created_at.between(month_start, month_end),
-            Purchase.payment_status == 'completed'
-        ).with_entities(db.func.sum(Purchase.price)).scalar() or 0
-        revenue_trend.append(monthly_revenue)
-    
     return render_template('admin_dashboard.html',
                          pending_scraps=pending_scraps,
                          approved_scraps=approved_scraps,
@@ -454,11 +374,10 @@ def admin_dashboard():
                          total_recyclers=total_recyclers,
                          total_processors=total_processors,
                          total_buyers=total_buyers,
-                         available_scrap=available_scrap, 
+                         available_scrap=available_scrap,
                          total_revenue=total_revenue,
                          total_purchases=total_purchases,
-                         recent_purchases=recent_purchases,
-                         revenue_trend=revenue_trend)
+                         recent_purchases=recent_purchases)
 
 @app.route('/admin/approve_scrap/<int:scrap_id>', methods=['POST'])
 @login_required
