@@ -29,31 +29,31 @@
             <i class="fas fa-weight-hanging"></i>
             <h3>{{ processed_scrap.steel|default(0) }} kg</h3>
             <p>Available Steel</p>
-        </div>
-    </div>
+                                    </div>
+                                </div>
     <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
         <div class="stat-card">
             <i class="fas fa-weight"></i>
             <h3>{{ processed_scrap.aluminium|default(0) }} kg</h3>
             <p>Available Aluminium</p>
-        </div>
-    </div>
+                            </div>
+                        </div>
     <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
         <div class="stat-card">
             <i class="fas fa-weight"></i>
             <h3>{{ processed_scrap.copper|default(0) }} kg</h3>
             <p>Available Copper</p>
-        </div>
-    </div>
+                                    </div>
+                                </div>
     {% else %}
     <div class="col-12">
         <div class="alert alert-info">
             <i class="fas fa-info-circle me-2"></i>
             No processed scrap is currently available for purchase. Please check back later.
-        </div>
-    </div>
+                            </div>
+                        </div>
     {% endif %}
-</div>
+                    </div>
                     
 <!-- Purchase Form -->
 <div class="row">
@@ -92,7 +92,7 @@
                             <span class="input-group-text">kg</span>
                         </div>
                         <small class="text-muted">Available: {{ processed_scrap.copper|default(0) }} kg</small>
-                    </div>
+                </div>
 
                     <button type="submit" class="btn btn-primary w-100">
                         <i class="fas fa-cart-plus me-2"></i>Add to Cart

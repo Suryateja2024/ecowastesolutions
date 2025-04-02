@@ -1,95 +1,124 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session, jsonify, flash, Flask
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify, flash
 import requests
 import json
 from datetime import datetime
 import random
 import razorpay
-from .models import db, User, Scrap, ProcessedScrap, CostPerKg, Purchase
+from other.models import db, User, Scrap, ProcessedScrap, CostPerKg, Purchase
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 from werkzeug.utils import secure_filename
-from flask_login import login_required, current_user, login_user, logout_user, LoginManager
+from flask_login import login_required, current_user, login_user, LoginManager, logout_user
+from dotenv import load_dotenv
 import logging
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Create Flask app
+# Load environment variables
+load_dotenv()
+
 app = Flask(__name__)
-
-# Create blueprint
-main = Blueprint('main', __name__)
-
-# Register blueprint
-app.register_blueprint(main)
+app.secret_key = os.getenv('SECRET_KEY', 'default-secret-key')
 
 # Initialize Flask-Login
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = 'main.login'
+login_manager.login_view = 'login'
 
 # Razorpay Configuration
 RAZORPAY_KEY_ID = os.getenv('RAZORPAY_KEY_ID')
 RAZORPAY_KEY_SECRET = os.getenv('RAZORPAY_KEY_SECRET')
 client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
 
-# Add these configurations
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+# Database Configuration
+database_url = os.getenv('DATABASE_URL')
+if database_url and database_url.startswith('postgres://'):
+    # Convert postgres:// to postgresql:// for SQLAlchemy
+    database_url = database_url.replace('postgres://', 'postgresql://', 1)
+app.config['SQLALCHEMY_DATABASE_URI'] = database_url or 'sqlite:///scrap.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# Add these configurations after app initialization
 UPLOAD_FOLDER = 'static/uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+# Initialize database
+db.init_app(app)
+
+# Cashfree Payment Gateway Configuration
+CASHFREE_APP_ID = os.getenv('CASHFREE_APP_ID')
+CASHFREE_SECRET_KEY = os.getenv('CASHFREE_SECRET_KEY')
+CASHFREE_API_URL = os.getenv('CASHFREE_API_URL', 'https://sandbox.cashfree.com/pg/orders')
+
+def init_db():
+    with app.app_context():
+        try:
+            # Create all tables if they don't exist
+            db.create_all()
+            logger.info("Database tables created successfully!")
+            
+            # Create default users if they don't exist
+            if not User.query.filter_by(username='admin').first():
+                admin = User(
+                    username='admin',
+                    password=generate_password_hash('admin123'),
+                    role='admin'
+                )
+                db.session.add(admin)
+                logger.info("Created default admin user")
+                
+            if not User.query.filter_by(username='processor').first():
+                processor = User(
+                    username='processor',
+                    password=generate_password_hash('processor123'),
+                    role='processor'
+                )
+                db.session.add(processor)
+                logger.info("Created default processor user")
+                
+            if not User.query.filter_by(username='buyer').first():
+                buyer = User(
+                    username='buyer',
+                    password=generate_password_hash('buyer123'),
+                    role='buyer'
+                )
+                db.session.add(buyer)
+                logger.info("Created default buyer user")
+            
+            # Create default cost settings if they don't exist
+            if not CostPerKg.query.first():
+                cost_settings = CostPerKg(
+                    steel_cost=12,
+                    aluminium_cost=10,
+                    copper_cost=8
+                )
+                db.session.add(cost_settings)
+                logger.info("Created default cost settings")
+                
+            db.session.commit()
+            logger.info("Database initialization completed successfully!")
+        except Exception as e:
+            logger.error(f"Error during database initialization: {str(e)}")
+            db.session.rollback()
+
+# Initialize the database when the application starts
+init_db()
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-@main.context_processor
-def inject_now():
-    return {'now': datetime.utcnow()}
+@app.route('/')
+def home():
+    return render_template("index.html")
 
-@main.route('/')
-def index():
-    return render_template('index.html')
-
-@main.route('/contact', methods=['GET', 'POST'])
-def contact():
-    try:
-        logger.info("Contact route accessed")
-        if request.method == 'POST':
-            logger.info("Contact form submitted")
-            name = request.form.get('name')
-            email = request.form.get('email')
-            subject = request.form.get('subject')
-            message = request.form.get('message')
-            
-            logger.info(f"Form data received: name={name}, email={email}, subject={subject}")
-            
-            # Here you would typically send an email or store the message
-            flash('Thank you for your message. We will get back to you soon!', 'success')
-            return redirect(url_for('main.home'))
-        
-        logger.info("Rendering contact form")
-        return render_template('index.html')
-    except Exception as e:
-        logger.error(f"Error in contact route: {str(e)}")
-        flash('An error occurred. Please try again later.', 'error')
-        return redirect(url_for('main.home'))
-
-@main.route('/privacy-policy')
-def privacy_policy():
-    return render_template('privacy_policy.html')
-
-@main.route('/terms')
-def terms():
-    return render_template('terms.html')
-
-@main.route('/cookies')
-def cookies():
-    return render_template('cookies.html')
-
-@main.route('/join')
-def join():
-    return redirect(url_for('register'))
-
-@main.route('/login', methods=['GET', 'POST'])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         try:
@@ -129,7 +158,7 @@ def login():
     
     return render_template('login.html')
 
-@main.route('/register', methods=['GET', 'POST'])
+@app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
         try:
@@ -169,7 +198,7 @@ def register():
             
     return render_template("register.html")
 
-@main.route('/user_dashboard')
+@app.route('/user_dashboard')
 @login_required
 def user_dashboard():
     if current_user.role != 'user':
@@ -184,7 +213,7 @@ def user_dashboard():
     
     return render_template("user_dashboard.html", scrap_data=user_scraps)
 
-@main.route('/submit_scrap', methods=['POST'])
+@app.route('/submit_scrap', methods=['POST'])
 @login_required
 def submit_scrap():
     try:
@@ -218,8 +247,8 @@ def submit_scrap():
             file = request.files['image']
             if file and allowed_file(file.filename):
                 filename = secure_filename(file.filename)
-                os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-                file.save(os.path.join(UPLOAD_FOLDER, filename))
+                os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
                 image_path = os.path.join('uploads', filename)
         
         new_scrap = Scrap(
@@ -245,7 +274,7 @@ def submit_scrap():
         flash(f'Error submitting scrap: {str(e)}', 'error')
         return redirect(url_for('user_dashboard'))
 
-@main.route('/processor_dashboard', methods=['GET', 'POST'])
+@app.route('/processor_dashboard', methods=['GET', 'POST'])
 @login_required
 def processor_dashboard():
     if current_user.role != 'processor':
@@ -282,7 +311,7 @@ def processor_dashboard():
         
     return render_template("processor_dashboard.html", scraps=approved_scraps, processed_scrap=processed_scrap)
 
-@main.route('/admin/dashboard')
+@app.route('/admin/dashboard')
 @login_required
 def admin_dashboard():
     if current_user.role != 'admin':
@@ -350,7 +379,7 @@ def admin_dashboard():
                          total_purchases=total_purchases,
                          recent_purchases=recent_purchases)
 
-@main.route('/admin/approve_scrap/<int:scrap_id>', methods=['POST'])
+@app.route('/admin/approve_scrap/<int:scrap_id>', methods=['POST'])
 @login_required
 def approve_scrap(scrap_id):
     if current_user.role != 'admin':
@@ -372,7 +401,7 @@ def approve_scrap(scrap_id):
     
     return redirect(url_for('admin_dashboard'))
 
-@main.route('/admin/reject_scrap/<int:scrap_id>', methods=['POST'])
+@app.route('/admin/reject_scrap/<int:scrap_id>', methods=['POST'])
 @login_required
 def reject_scrap(scrap_id):
     if current_user.role != 'admin':
@@ -394,7 +423,7 @@ def reject_scrap(scrap_id):
     
     return redirect(url_for('admin_dashboard'))
 
-@main.route('/buyer/dashboard', methods=['GET', 'POST'])
+@app.route('/buyer/dashboard', methods=['GET', 'POST'])
 @login_required
 def buyer_dashboard():
     if current_user.role != 'buyer':
@@ -459,7 +488,7 @@ def buyer_dashboard():
                          processed_scrap=processed_scrap,
                          cost_settings=cost_settings)
 
-@main.route('/buy_now', methods=['POST'])
+@app.route('/buy_now', methods=['POST'])
 @login_required
 def buy_now():
     if current_user.role != 'buyer':
@@ -492,7 +521,7 @@ def buy_now():
     else:
         return "Scrap not available in the requested quantity.", 400
 
-@main.route('/create_order', methods=['POST'])
+@app.route('/create_order', methods=['POST'])
 @login_required
 def create_order():
     if 'cart' not in session:
@@ -521,7 +550,7 @@ def create_order():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@main.route('/payment_page')
+@app.route('/payment_page')
 def payment_page():
     if 'cart' not in session or not session['cart']:
         return redirect(url_for('buyer_dashboard'))
@@ -531,7 +560,7 @@ def payment_page():
                          grand_total=session['grand_total'],
                          razorpay_key_id=RAZORPAY_KEY_ID)
 
-@main.route('/payment_success', methods=['POST'])
+@app.route('/payment_success', methods=['POST'])
 @login_required
 def payment_success():
     try:
@@ -610,7 +639,7 @@ def payment_success():
         flash(f'Error processing purchase: {str(e)}', 'error')
         return redirect(url_for('buyer_dashboard'))
 
-@main.route('/bill')
+@app.route('/bill')
 @login_required
 def bill():
     if 'bill_items' not in session or 'bill_total' not in session:
@@ -628,13 +657,13 @@ def bill():
                          cart_items=cart_items, 
                          grand_total=grand_total)
 
-@main.route('/logout')
+@app.route('/logout')
 def logout():
     logout_user()
     session.clear()
-    return redirect(url_for('main.home'))
+    return redirect(url_for('home'))
 
-@main.route('/recycler_dashboard', methods=['GET', 'POST'])
+@app.route('/recycler_dashboard', methods=['GET', 'POST'])
 @login_required
 def recycler_dashboard():
     if current_user.role != 'recycler':
@@ -657,7 +686,7 @@ def recycler_dashboard():
     recycler_scraps = Scrap.query.filter_by(user_id=current_user.id).all()
     return render_template("recycler_dashboard.html", scrap_data=recycler_scraps)
 
-@main.route('/test-db')
+@app.route('/test-db')
 def test_db():
     try:
         # Try to query the database
@@ -676,7 +705,5 @@ def test_db():
         }), 500
 
 if __name__ == '__main__':
-    logger.info("Starting Flask application")
-    logger.info(f"Registered routes: {[str(rule) for rule in app.url_map.iter_rules()]}")
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=False)

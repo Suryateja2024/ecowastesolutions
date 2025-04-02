@@ -1,0 +1,18 @@
+[33ma95f0e5[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m Fix Flask app initialization and wsgi configuration
+[33mc966afd[m Fix Procfile to point to correct Flask application location
+[33mff4de56[m Fix Flask app initialization and Blueprint registration
+[33mcda5c45[m Fix url_for calls in index.html to use main blueprint prefix
+[33m21f3679[m Fix template routes by removing blueprint prefix
+[33m20d7752[m Fix template routes and update Procfile for proper deployment
+[33mcf7f211[m Add styles for landing page and policy pages
+[33mddbbced[m Update UI with new landing page and policy pages
+[33m93ddee9[m Update Procfile for deployment
+[33mdebcd27[m Add address field and fix form submission
+[33m67e1d8d[m Add address field and fix scrap display issues
+[33mf7be7da[m Fix scrap submission and approval process
+[33m02b8a5e[m Add error handling, logging, and database initialization
+[33m5c76598[m Fix SQLAlchemy version and database URL configuration
+[33m2d55b72[m Fix module imports and Python path
+[33mf578712[m Fix module import issues
+[33maefbf69[m Fix deployment configuration
+[33me50d06a[m Initial commit
