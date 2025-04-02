@@ -4,7 +4,7 @@ import json
 from datetime import datetime
 import random
 import razorpay
-from models import db, User, Scrap, ProcessedScrap, CostPerKg, Purchase
+from other.models import db, User, Scrap, ProcessedScrap, CostPerKg, Purchase
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 from werkzeug.utils import secure_filename
