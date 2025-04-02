@@ -3,18 +3,18 @@ services:
     name: ecowastsolutions
     env: python
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn app:app
+    startCommand: gunicorn other.app:app
     envVars:
       - key: PYTHON_VERSION
-        value: 3.11.0
+        value: 3.9.0
       - key: PYTHONPATH
         value: /opt/render/project/src
       - key: SECRET_KEY
         generateValue: true
       - key: RAZORPAY_KEY_ID
-        value: rzp_test_h2s4PxBwrmOiSL
+        sync: false
       - key: RAZORPAY_KEY_SECRET
-        value: beJB0s8KqtrFC8JnRjpJsYOl
+        sync: false
       - key: DATABASE_URL
         fromDatabase:
           name: ecowastsolutions-db
@@ -24,4 +24,8 @@ databases:
   - name: ecowastsolutions-db
     databaseName: metal_waste_db
     user: metal_waste_user
-    plan: free 
+    plan: free
+    disk:
+      name: data
+      mountPath: /var/lib/postgresql/data
+      sizeGB: 1 
