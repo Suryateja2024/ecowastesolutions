@@ -46,7 +46,7 @@ def inject_now():
     return {'now': datetime.utcnow()}
 
 @main.route('/')
-def home():
+def index():
     return render_template('index.html')
 
 @main.route('/contact', methods=['GET', 'POST'])
